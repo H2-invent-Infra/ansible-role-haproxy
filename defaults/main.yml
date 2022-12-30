@@ -88,6 +88,16 @@ haproxy_resolvers: []
 # ACL files
 haproxy_acl_files: []
 
+# Copy Files
+haproxy_copy_files: []
+#  - content:
+#    dest:
+#    path:
+
+
+
+
+
 # Letsencrypt (SSL/OCSP deploy)
 haproxy_letsencrypt_ssl_deploy_template: usr/local/bin/haproxy-letsencrypt-ssl-deploy.j2
 haproxy_letsencrypt_ssl_first_cert: "{{ inventory_hostname }}"

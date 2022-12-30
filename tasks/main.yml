@@ -15,29 +15,23 @@
     - haproxy
     - haproxy-install
 
-- import_tasks: certificates.yml
-  tags:
-    - configuration
-    - haproxy
-    - haproxy-certificates
-
 - import_tasks: acl.yml
   tags:
     - configuration
     - haproxy
     - haproxy-acl
 
+- import_tasks: copy_files.yml
+  tags:
+    - configuration
+    - haproxy
+    - haproxy-copy
+
 - import_tasks: configuration.yml
   tags:
     - configuration
     - haproxy
     - haproxy-configuration
-
-- import_tasks: letsencrypt.yml
-  tags:
-    - configuration
-    - haproxy
-    - haproxy-letsencrypt
 
 - name: start and enable service
   service:
