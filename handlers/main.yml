@@ -5,3 +5,8 @@
     name: haproxy
     state: "{{ haproxy_restart_handler_state }}"
   when: service_default_state | default('started') == 'started'
+
+- name: reload haproxy
+  service:
+    name: haproxy
+    state: "reloaded"

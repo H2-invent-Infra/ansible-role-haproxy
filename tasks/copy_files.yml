@@ -18,5 +18,5 @@
   when:
     - haproxy_copy_files | length > 0
     - item.content is defined
-  notify: restart haproxy
+  notify: reload haproxy
   with_items: "{{ haproxy_copy_files }}"

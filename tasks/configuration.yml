@@ -18,6 +18,6 @@
     group: root
     mode: 0640
     validate: 'haproxy -f %s -c'
-  notify: restart haproxy
+  notify: reload haproxy
   tags:
     - haproxy-configuration-update-file
