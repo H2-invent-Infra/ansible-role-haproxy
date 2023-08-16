@@ -2,11 +2,11 @@
 - name: Create directory
   file:
     path: "{{ item.path }}"
+    state: directory
     owner: "{{ haproxy_global_user }}"
     group: "{{ haproxy_global_group }}"
   when:
     - haproxy_copy_files | length > 0
-    - item.path is defined
   with_items: "{{ haproxy_copy_files }}"
 
 - name: Copy Content from Controller to HaProxy

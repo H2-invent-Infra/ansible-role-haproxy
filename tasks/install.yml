@@ -9,13 +9,23 @@
   tags:
     - haproxy-repository-install-dependencies
 
-- name: install | add repository from PPA and install its signing key
+- name: install | Create Repo Key Directory
+  file:
+    path: /etc/apt/trusted.gpg.d
+    state: directory
+
+- name: install | Download Debian Signing Key
+  get_url:
+    url: https://haproxy.debian.net/bernat.debian.org.gpg
+    dest: /etc/apt/trusted.gpg.d/haproxy-official-repo.key
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Set zabbix repo file for Debian
   apt_repository:
-    repo: "{{ haproxy_ppa }}"
-    update_cache: true
-  when: haproxy_use_ppa | bool
-  tags:
-    - haproxy-install-add-repository
+    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/haproxy-official-repo.key] http://haproxy.debian.net {{ ansible_distribution_release | lower }}-backports-{{ haproxy_version }} main"
+    state: present
+    filename: haproxy-repo
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: install | dependencies
   apt:

@@ -48,7 +48,6 @@ Set up (the latest version of) [HAProxy](http://www.haproxy.org/) in Ubuntu syst
 * `haproxy_global_ssl_engines.{n}.name`: [required]: Sets the OpenSSL engine to use (e.g. `rdrand`)
 * `haproxy_global_ssl_engines.{n}.algos`: [optional]: Sets the OpenSSL algorithms to use (e.g. `['RSA']`)
 * `haproxy_global_ssl_mode_async`: [optional: default `false`]: Enables asynchronous TLS I/O operations if asynchronous capable SSL engines are used (`>= 1.8.0` only)
-* `haproxy_global_nbproc`: [default: `1`]: Number of processes to create when going daemon. This requires the `daemon` mode. By default, only one process is created, which is the recommended mode of operation
 * `haproxy_global_nbthread`: [optional]: This setting is only available when support for threads was built in. It creates `<number>` threads for each created processes (`>= 1.8.0` only)
 * `haproxy_global_tune`: [default: `[]`]: (Performance) tuning declarations
 * `haproxy_global_tune.{n}.key`: [required]: Setting name (e.g. `ssl.cachesize`)
@@ -78,14 +77,6 @@ Set up (the latest version of) [HAProxy](http://www.haproxy.org/) in Ubuntu syst
 * `haproxy_defaults_compression.{}.value`: [required]: The compression value, (e.g. if name = algo : one of this values `identity`, `gzip`, `deflate`, `raw-deflate` / if name = type : list of mime type separated by space for example `text/html text/plain text/css` / if name = `offload` value is empty)
 * `haproxy_default_server_params`: [optional]: Default server backend parameters passed to each backend/listen server.
 * `haproxy_default_raw_options`: [default: `[]`]: Additional arbitrary lines to insert in the section
-
-* `haproxy_ssl_map`: [default: `[]`]: SSL declarations
-* `haproxy_ssl_map.{n}.state`: [default: `present`]: Whether to ensure the file is present or absent
-* `haproxy_ssl_map.{n}.src`: The local path of the file to copy, can be absolute or relative (e.g. `../../../files/haproxy/etc/haproxy/ssl/star-example-com.pem`)
-* `haproxy_ssl_map.{n}.dest`: The remote path of the file to copy (e.g. `/etc/haproxy/ssl/star-example-com.pem`)
-* `haproxy_ssl_map.{n}.owner`: The name of the user that should own the file (optional, default `root`)
-* `haproxy_ssl_map.{n}.group`: The name of the group that should own the file (optional, default `root`)
-* `haproxy_ssl_map.{n}.mode`: The mode of the file, such as 0644 (optional, default `0640`)
 
 * `haproxy_listen`: [default: `[]`]: Listen declarations
 * `haproxy_listen.{n}.name`: [required]: The name of the section (e.g. `stats`)
@@ -478,14 +469,6 @@ None
   roles:
     - haproxy
   vars:
-    haproxy_ssl_map:
-      - src: ../../../files/haproxy/etc/haproxy/ssl/star-example0-com.pem
-        dest: /etc/ssl/private/star-example0-com.pem
-      - src: ../../../files/haproxy/etc/haproxy/ssl/star-example1-com.pem
-        dest: /etc/ssl/private/star-example1-com.pem
-      - src: ../../../files/haproxy/etc/haproxy/ssl/star-example2-com.pem
-        dest: /etc/ssl/private/star-example2-com.pem
-
     haproxy_listen:
       - name: stats
         description: Global statistics
@@ -614,16 +597,6 @@ None
         - listen: /run/haproxy/admin-4.sock
           param: "{{ haproxy_global_stats_sockets_default_param + ['process 4'] }}"
       timeout: 30s
-
-    haproxy_global_nbproc: 4
-
-    haproxy_ssl_map:
-      - src: ../../../files/haproxy/etc/haproxy/ssl/star-example0-com.pem
-        dest: /etc/ssl/private/star-example0-com.pem
-      - src: ../../../files/haproxy/etc/haproxy/ssl/star-example1-com.pem
-        dest: /etc/ssl/private/star-example1-com.pem
-      - src: ../../../files/haproxy/etc/haproxy/ssl/star-example2-com.pem
-        dest: /etc/ssl/private/star-example2-com.pem
 
     haproxy_listen:
       - name: stats
