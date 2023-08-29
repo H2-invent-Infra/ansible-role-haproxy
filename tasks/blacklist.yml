@@ -1,0 +1,7 @@
+- name: blacklist | update list
+  copy:
+    content: |
+      {% for ip in haproxy_global_blacklist %}
+      {{ ip }}
+      {% endfor %}
+    dest: /etc/haproxy/blacklist.acl

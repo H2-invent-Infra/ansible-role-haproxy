@@ -11,6 +11,8 @@ haproxy_restart_handler_state: restarted
 
 haproxy_conf_template: "etc/haproxy/haproxy.cfg.j2"
 
+haproxy_global_blacklist: []
+
 # global section
 haproxy_global_log:
   - address: /dev/log

@@ -21,6 +21,12 @@
     - haproxy
     - haproxy-acl
 
+- import_tasks: blacklist.yml
+  tags:
+    - configuration
+    - haproxy
+    - haproxy-blacklist
+
 - import_tasks: copy_files.yml
   tags:
     - configuration
