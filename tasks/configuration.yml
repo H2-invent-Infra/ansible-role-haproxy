@@ -1,5 +1,13 @@
 # tasks file
 ---
+- name: configuration | add coraza waf config
+  template:
+    src: etc/haproxy/coraza.cfg.j2
+    dest: /etc/haproxy/coraza.cfg
+    owner: root
+    group: root
+    mode: 0640
+
 - name: configuration | update file
   template:
     src: "{{ haproxy_conf_template }}"

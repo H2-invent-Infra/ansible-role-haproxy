@@ -7,6 +7,8 @@ frontend {{ frontend.name }}
   bind {{ bind.listen }}{% for param in bind.param | default([]) %} {{ param }}{% endfor %}
 
 {% endfor %}
+  unique-id-format %[uuid()]
+  unique-id-header X-Unique-ID
 {% if frontend.bind_process is defined %}
   bind-process {{ frontend.bind_process | join(' ') }}
 {% endif %}
