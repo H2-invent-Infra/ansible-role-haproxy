@@ -11,7 +11,7 @@
 - name: configuration | update file
   template:
     src: "{{ haproxy_conf_template }}"
-    dest: /etc/haproxy/haproxy.cfg
+    dest: "{{ haproxy_conf_location }}"
     owner: root
     group: root
     mode: 0640

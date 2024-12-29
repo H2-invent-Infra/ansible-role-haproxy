@@ -1,0 +1,29 @@
+- name: Set template location of new haproxy config
+  set_fact:
+    haproxy_conf_location: "/etc/haproxy/haproxy.cfg.temp"
+
+- name: Add Cronjob to update haproxy
+  template:
+    src: "k8s/{{ item }}.j2"
+    dest: "/etc/haproxy/{{ item }}"
+    mode: '0700'
+    owner: root
+    group: root
+  with_items:
+    - gateway-haproxy-config-cron
+    - gateway-haproxy-config.py
+
+- name: Add Cronjob for haproxy
+  include_role:
+    name: ansible-role-crontab
+    tasks_from: crontab
+  vars:
+    h2_cron_jobs:
+      - cron_name: update haproxy with k8s load balancer services
+        user: root
+        cron_file: k8s_lb_haproxy
+        job: /bin/bash /etc/haproxy/gateway-haproxy-config-cron
+        state: present
+
+
+

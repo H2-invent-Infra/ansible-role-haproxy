@@ -33,11 +33,29 @@
     - haproxy
     - haproxy-copy
 
+- include_tasks: k8s.yml
+  when:
+    - haproxy_k8s_enable is defined
+    - haproxy_k8s_enable | bool
+  tags:
+    - configuration
+    - haproxy-configuration    
+
 - import_tasks: configuration.yml
   tags:
     - configuration
     - haproxy
     - haproxy-configuration
+
+- name: Run job of k8s service enabled
+  shell: /bin/bash /etc/haproxy/gateway-haproxy-config-cron
+  when:
+  when:
+    - haproxy_k8s_enable is defined
+    - haproxy_k8s_enable | bool
+  tags:
+    - configuration
+    - haproxy-configuration    
 
 - name: start and enable service
   service:
