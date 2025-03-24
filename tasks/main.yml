@@ -66,3 +66,15 @@
     - configuration
     - haproxy
     - haproxy-start-enable-service
+
+- name: Add HaProxy Shared Group
+  ansible.builtin.group:
+    name: haproxy-shared
+    state: present
+    gid: 10493
+
+- name: Add HaProxy User to Shared Group
+  ansible.builtin.user:
+    name: haproxy
+    group: haproxy-shared
+    append: true
