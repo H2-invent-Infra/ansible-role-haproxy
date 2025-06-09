@@ -115,9 +115,10 @@ backend {{ backend.name }}
 
 {% endfor %}
 {% for server_dynamic in backend.server_dynamic | default([]) %}
+{% set server_dynamic_loop = loop.index %}
 {% for server_name in groups[server_dynamic.group] %}
 {% set server = hostvars[server_name] %}
-  server {{ server.inventory_hostname }} {% if server.ansible_host is defined %}{{ server.ansible_host }}{% else %}{{ server_name }}{% endif %}{% if server_dynamic.listen_port is defined %}:{{ server_dynamic.listen_port }}{% endif %}{% for param in server_dynamic.param | default([]) %} {{ param }}{% endfor %} cookie {{ loop.index }}
+  server {{ server.inventory_hostname }}-{{ server_dynamic_loop }} {% if server.ansible_host is defined %}{{ server.ansible_host }}{% else %}{{ server_name }}{% endif %}{% if server_dynamic.listen_port is defined %}:{{ server_dynamic.listen_port }}{% endif %}{% for param in server_dynamic.param | default([]) %} {{ param }}{% endfor %} cookie {{ server_dynamic_loop }}{{ loop.index }}
 {% endfor %}
 {% endfor %}
 {% if backend.server_template is defined %}
