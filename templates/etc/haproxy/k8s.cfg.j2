@@ -1,0 +1,13 @@
+{% raw %}
+{{- range .backends }}
+backend {{ .Name }}
+  mode http
+  balance leastconn
+  cookie {{ .Name }} insert indirect nocache
+
+  {{- range .Servers }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }} check cookie {{ .Cookie }}
+  {{- end }}
+
+{{- end }}
+{% endraw %}
