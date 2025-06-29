@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -euo pipefail
+
+BIN_PATH="/usr/local/bin/haproxy-generator"
+CONFIG_PATH="/etc/haproxy/haproxy.cfg"
+NEW_CONFIG="${CONFIG_PATH}.new"
+HAPROXY_TEMPLATE="{{ haproxy_conf_location }}"
+
+# Setze notwendige Umgebungsvariablen
+export HAPROXY_TEMPLATE="$HAPROXY_TEMPLATE"
+export KUBERNETES_HOST="https://{{ haproxy_k8s_master_ip }}:{{ haproxy_k8s_master_port }}"
+export KUBERNETES_TOKEN="{{ haproxy_k8s_token }}"     # <<< hier echten Token einfügen
+export KUBERNETES_VERIFYSSL="{{ haproxy_k8s_verify_ssl }}"
+
+# Prüfe, ob Template vorhanden ist
+if [ ! -f "$HAPROXY_TEMPLATE" ]; then
+    echo "[ERROR] Template-Datei nicht gefunden: $HAPROXY_TEMPLATE" >&2
+    exit 1
+fi
+
+# Neue Konfiguration generieren
+if ! "$BIN_PATH" > "$NEW_CONFIG"; then
+    echo "[ERROR] Fehler beim Ausführen von haproxy_generator" >&2
+    exit 1
+fi
+
+# Syntaxprüfung der neuen Konfiguration
+if ! /sbin/haproxy -f "$NEW_CONFIG" -c; then
+    echo "[ERROR] Neue Konfiguration ist syntaktisch ungültig (haproxy -c)" >&2
+    exit 1
+fi
+
+# Unterschiede prüfen und ggf. übernehmen
+if ! diff -q "$CONFIG_PATH" "$NEW_CONFIG" > /dev/null; then
+    echo "[INFO] Änderungen erkannt - Konfiguration wird übernommen"
+    mv "$NEW_CONFIG" "$CONFIG_PATH"
+    /usr/sbin/service haproxy reload
+else
+    echo "[INFO] Keine Änderungen - kein Reload notwendig"
+    rm -f "$NEW_CONFIG"
+fi

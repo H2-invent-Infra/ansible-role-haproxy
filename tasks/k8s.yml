@@ -2,16 +2,21 @@
   set_fact:
     haproxy_conf_location: "/etc/haproxy/haproxy.cfg.temp"
 
-- name: Add Cronjob to update haproxy
+- name: Download Haproxy-generator
+  ansible.builtin.get_url:
+    url:  "https://git.h2-invent.com/Public-System-Design/haproxy-kubernetes/releases/download/{{ haproxy_k8s_generator_version }}/haproxy-generator"
+    dest: /usr/local/bin/haproxy-generator
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: Add Cronjob Script to update haproxy
   template:
-    src: "k8s/{{ item }}.j2"
-    dest: "/etc/haproxy/{{ item }}"
+    src: k8s/haproxy_k8s_generate.j2
+    dest: /etc/haproxy/haproxy_k8s_generate
     mode: '0700'
     owner: root
     group: root
-  with_items:
-    - gateway-haproxy-config-cron
-    - gateway-haproxy-config.py
 
 - name: Add Cronjob for haproxy
   include_role:
@@ -21,9 +26,6 @@
     h2_cron_jobs:
       - cron_name: update haproxy with k8s load balancer services
         user: root
-        cron_file: k8s_lb_haproxy
-        job: /bin/bash /etc/haproxy/gateway-haproxy-config-cron
+        cron_file: haproxy_k8s
+        job: /bin/bash /etc/haproxy/haproxy_k8s_generate
         state: present
-
-
-
