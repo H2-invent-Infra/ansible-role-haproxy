@@ -14,8 +14,6 @@
     - reload haproxy_ingress
 
 - name: reload haproxy_ingress
-  service:
-    name: haproxy_ingress
-    state: reloaded
+  shell: /bin/bash /etc/haproxy/haproxy_k8s_generate
   when:
     - haproxy_k8s_enable
