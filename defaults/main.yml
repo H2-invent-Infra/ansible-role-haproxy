@@ -19,6 +19,11 @@ haproxy_k8s_verify_ssl: 'False'
 haproxy_k8s_token: 'eysefsadf'
 haproxy_k8s_generator_version: 0.0.4
 
+haproxy_ingress_ca: kube
+haproxy_ingress_cluster_name: kube
+haproxy_ingress_cluster_server: 10.10.10.10
+haproxy_ingress_token: 'eysesadfg'
+
 haproxy_global_blacklist: []
 
 # global section

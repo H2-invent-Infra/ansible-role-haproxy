@@ -9,4 +9,13 @@
 - name: reload haproxy
   service:
     name: haproxy
-    state: "reloaded"
+    state: reloaded
+  notify:
+    - reload haproxy_ingress
+
+- name: reload haproxy_ingress
+  service:
+    name: haproxy_ingress
+    state: reloaded
+  when:
+    - haproxy_k8s_enable

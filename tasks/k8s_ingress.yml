@@ -1,0 +1,51 @@
+- name: Create Systemd Service for haproxy_ingress
+  ansible.builtin.include_role:
+    name: ansible-role-service-user
+  vars:
+    h2_service_user_systemd:
+      haproxy_ingress:
+        user_name: haproxy_ingress
+        user_id: 4012
+        user_shell: /usr/bash
+        user_home: /opt/haproxy_ingress
+        create_user_home: true
+        config: |
+          [Unit]
+          Description=HAProxy Kubernetes Ingress Controller
+          After=network.target
+
+          [Service]
+          Restart=always
+          User=haproxy_ingress
+          Group=haproxy
+          ExecStart=/opt/haproxy_ingress/haproxy-ingress-controller \
+            --external \
+            --kubeconfig=/opt/haproxy_ingress/kubeconfig.yaml \
+            --configmap=kube-system/haproxy-config \
+            --runtime-address=/run/haproxy/admin.sock \
+            --update-filters runtime
+
+          [Install]
+          WantedBy=multi-user.target
+
+        environment: ""
+
+- name: Download Haproxy-Ingress
+  ansible.builtin.unarchive:
+    src: "https://github.com/haproxytech/kubernetes-ingress/releases/download/v{{ haproxy_k8s_ingress_version }}/haproxy-ingress-controller_{{ haproxy_k8s_ingress_version }}_Linux_x86_64.tar.gz"
+    dest: /opt/haproxy_ingress/
+    owner: haproxy_ingress
+    group: haproxy
+    remote_src: true
+  notify:
+    - reload haproxy
+
+- name: Create kubeconfig for haproxy_ingress
+  template:
+    src: k8s/kubeconfig.yaml.j2
+    dest: /opt/haproxy_ingress/kubeconfig.yaml
+    owner: haproxy_ingress
+    group: haproxy
+    mode: '0660'
+  notify:
+    - reload haproxy
