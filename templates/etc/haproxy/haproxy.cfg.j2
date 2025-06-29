@@ -23,19 +23,20 @@ defaults
 {% if haproxy_k8s_enable is defined and haproxy_k8s_enable %}
 # Additional Kerberos Load Balancer Service Backends
 {% raw %}
-{% for backend in backends %}
-backend {{ backend.name }}
-    mode {{ backend.mode }}
-    balance {{ backend.balance }}
-    {% for key, value in backend.labels %}
-    {% if 'haproxy_backend_option_' in key %}
-    {{ value }}
-    {% endif %}
-    {% endfor %}
-    {% for server in backend.servers -%}
-    {{ server }}{% for key, value in backend.labels %}{% if 'haproxy_server_config_' in key %} {{ value }}{% endif %}{% endfor %}
-    {% endfor %}
 
-{% endfor %}
+{{- range .backends }}
+
+backend {{ .Name }}
+  mode http
+  balance leastconn
+  cookie {{ .Name }} insert indirect nocache
+
+  {{- range .Servers }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }} check cookie {{ .Cookie }}
+  {{- end }}
+
+{{- end }}
+
+
 {% endraw %}
 {% endif %}
