@@ -33,7 +33,7 @@
     - haproxy
     - haproxy-copy
 
-- include_tasks: k8s_ingress.yml
+- include_tasks: k8s.yml
   when:
     - haproxy_k8s_enable is defined
     - haproxy_k8s_enable | bool
