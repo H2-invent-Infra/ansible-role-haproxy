@@ -10,7 +10,7 @@ HAPROXY_TEMPLATE="{{ haproxy_conf_location }}"
 # Setze notwendige Umgebungsvariablen
 export HAPROXY_TEMPLATE="$HAPROXY_TEMPLATE"
 export KUBERNETES_HOST="https://{{ haproxy_k8s_master_ip }}:{{ haproxy_k8s_master_port }}"
-export KUBERNETES_TOKEN="{{ haproxy_k8s_token }}"     # <<< hier echten Token einfügen
+export KUBERNETES_TOKEN="{{ haproxy_k8s_token }}"
 export KUBERNETES_VERIFYSSL="{{ haproxy_k8s_verify_ssl }}"
 
 # Prüfe, ob Template vorhanden ist
@@ -36,7 +36,9 @@ if ! diff -q "$CONFIG_PATH" "$NEW_CONFIG" > /dev/null; then
     echo "[INFO] Änderungen erkannt - Konfiguration wird übernommen"
     mv "$NEW_CONFIG" "$CONFIG_PATH"
     /usr/sbin/service haproxy reload
+    exit 0
 else
     echo "[INFO] Keine Änderungen - kein Reload notwendig"
     rm -f "$NEW_CONFIG"
+    exit 0
 fi

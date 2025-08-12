@@ -1,6 +1,15 @@
 - name: Set template location of new haproxy config
-  set_fact:
+  ansible.builtin.set_fact:
     haproxy_conf_location: "/etc/haproxy/haproxy.cfg.temp"
+
+- name: Reconfigure HaProxy as template
+  template:
+    src: "{{ haproxy_conf_template }}"
+    dest: "{{ haproxy_conf_location }}"
+    owner: root
+    group: root
+    mode: 0640
+  notify: reload haproxy
 
 - name: Download Haproxy-generator
   ansible.builtin.get_url:
@@ -11,21 +20,55 @@
     mode: '0700'
 
 - name: Add Cronjob Script to update haproxy
-  template:
+  ansible.builtin.template:
     src: k8s/haproxy_k8s_generate.j2
     dest: /etc/haproxy/haproxy_k8s_generate
     mode: '0700'
     owner: root
     group: root
 
-- name: Add Cronjob for haproxy
-  include_role:
-    name: ansible-role-crontab
-    tasks_from: crontab
-  vars:
-    h2_cron_jobs:
-      - cron_name: update haproxy with k8s load balancer services
-        user: root
-        cron_file: haproxy_k8s
-        job: /bin/bash /etc/haproxy/haproxy_k8s_generate
-        state: present
+- name: Create Systemd Service for haproxy generator
+  ansible.builtin.copy:
+    content: |
+      [Unit]
+      Description=HAProxy Config Generator
+      After=network.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/bash /etc/haproxy/haproxy_k8s_generate
+    dest: /etc/systemd/system/haproxy-generator.service
+    owner: root
+    group: root
+    mode: 640
+
+- name: Create Systemd Timer for haproxy generator
+  ansible.builtin.copy:
+    content: |
+      [Unit]
+      Description=Run HAProxy Config Generator every minute
+
+      [Timer]
+      OnBootSec=30sec
+      OnUnitActiveSec=30sec
+      Unit=haproxy-generator.service
+      Persistent=true
+
+      [Install]
+      WantedBy=timers.target
+    dest: /etc/systemd/system/haproxy-generator.timer
+    owner: root
+    group: root
+    mode: 640
+
+- name: Reload Daemon and enable timer
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    name: haproxy-generator.timer
+    enabled: true
+    state: restarted
+
+- name: Start generator
+  ansible.builtin.systemd_service:
+    name: haproxy-generator
+    state: started
