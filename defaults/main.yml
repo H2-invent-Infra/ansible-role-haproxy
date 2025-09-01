@@ -17,12 +17,7 @@ haproxy_k8s_master_port: 6443
 haproxy_k8s_master_ip: 10.10.1.10
 haproxy_k8s_verify_ssl: 'False'
 haproxy_k8s_token: 'eysefsadf'
-haproxy_k8s_generator_version: 0.0.4
-
-haproxy_ingress_ca: kube
-haproxy_ingress_cluster_name: kube
-haproxy_ingress_cluster_server: 10.10.10.10
-haproxy_ingress_token: 'eysesadfg'
+haproxy_k8s_generator_version: 0.0.25
 
 haproxy_global_blacklist: []
 

@@ -1,12 +1,21 @@
 {% raw %}
 {{- range .backends }}
-backend {{ .Name }}
-  mode http
-  balance leastconn
-  cookie {{ .Name }} insert indirect nocache
 
+backend {{ .Name }}
+  mode {{ .Mode }}
+  balance {{ .Balance }}
+  {{- if .CookieName }}
+  cookie {{ .CookieName }} {{ .CookieFlags }}
+  {{- end }}
+
+  {{- if .HealthCheck }}
+  option httpchk GET {{ .HealthCheck }}
+  http-check expect status 200
+  {{- end }}
+
+  {{- $backend := . }}
   {{- range .Servers }}
-  server {{ .Name }} {{ .Address }}:{{ .Port }} check cookie {{ .Cookie }}
+  server {{ .Name }} {{ .Address }}:{{ .Port }}{{ if $backend.HealthCheck }} check{{ end }}{{ if $backend.CookieName }} cookie {{ .Cookie }}{{ end }}{{ if $backend.ServerOptions }} {{ $backend.ServerOptions }}{{ end }}
   {{- end }}
 
 {{- end }}
