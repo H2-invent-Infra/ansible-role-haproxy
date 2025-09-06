@@ -21,6 +21,6 @@ defaults
 {% include 'backend.cfg.j2' %}
 
 {% if haproxy_k8s_enable is defined and haproxy_k8s_enable %}
-# Additional Kerberos Load Balancer Service Backends
-{% include 'k8s.cfg.j2' %}
+# Additional Kubernetes Load Balancer Service Backends
+{% include 'k8s_backend.cfg.j2' %}
 {% endif %}

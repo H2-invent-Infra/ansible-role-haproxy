@@ -1,0 +1,7 @@
+{% raw %}
+{{- range .backends }}
+{{- if .UseBackendAcl }}
+  use_backend {{ .Name }} if {{ .UseBackendAcl }}
+{{- end }}
+{{- end }}
+{% endraw %}
