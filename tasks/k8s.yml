@@ -49,8 +49,8 @@
       Description=Run HAProxy Config Generator every minute
 
       [Timer]
-      OnBootSec=30sec
-      OnUnitActiveSec=30sec
+      OnBootSec=10sec
+      OnUnitActiveSec=10sec
       Unit=haproxy-generator.service
       Persistent=true
 
