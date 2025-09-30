@@ -13,6 +13,8 @@ haproxy_conf_template: "etc/haproxy/haproxy.cfg.j2"
 haproxy_conf_location: "/etc/haproxy/haproxy.cfg"
 
 haproxy_k8s_enable: false
+haproxy_k8s_frontend: "{{ haproxy_k8s_enable }}"
+haproxy_k8s_backend: "{{ haproxy_k8s_enable }}"
 haproxy_k8s_master_port: 6443
 haproxy_k8s_master_ip: 10.10.1.10
 haproxy_k8s_verify_ssl: 'False'

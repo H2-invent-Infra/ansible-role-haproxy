@@ -103,7 +103,7 @@ frontend {{ frontend.name }}
   use_backend {{ frontend.use_backend }}
 {% endif %}
 {% endif %}
-{% if haproxy_k8s_enable is defined and haproxy_k8s_enable %}
+{% if haproxy_k8s_enable and haproxy_k8s_frontend %}
 {% include 'k8s_frontend.cfg.j2' %}
 {% endif %}
 {% if frontend.default_backend is defined %}
