@@ -1,7 +1,4 @@
-{% raw %}
-{{- range .backends }}
-{{- if .UseBackendAcl }}
-  use_backend {{ .Name }} if {{ .UseBackendAcl }}
-{{- end }}
+{% raw %}{{- range index .rulesByFrontend "{% endraw %}{{ frontend.name }}{% raw %}" }}
+  use_backend {{ .Backend }} if {{ .Acl }}
 {{- end }}
 {% endraw %}

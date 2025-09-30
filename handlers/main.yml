@@ -11,9 +11,9 @@
     name: haproxy
     state: reloaded
   notify:
-    - reload haproxy_ingress
+    - reload haproxy_k8s_generate
 
-- name: reload haproxy_ingress
+- name: reload haproxy_k8s_generate
   shell: /bin/bash /etc/haproxy/haproxy_k8s_generate
   when:
     - haproxy_k8s_enable
